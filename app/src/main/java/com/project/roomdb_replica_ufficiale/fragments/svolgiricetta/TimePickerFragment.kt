@@ -23,13 +23,13 @@ class TimePickerFragment : DialogFragment(){
         val minPicker = view.findViewById<NumberPicker>(R.id.picker_minuti)
         val secPicker = view.findViewById<NumberPicker>(R.id.picker_secondi)
 
-        val valori = Array(61) { i -> "%02d".format(i) }  // ["00", "01", ..., "60"]
+        val valori = Array(60) { i -> "%02d".format(i) }  // ["00", "01", ..., "60"]
         minPicker.minValue = 0
-        minPicker.maxValue = 60
+        minPicker.maxValue = 59
         minPicker.displayedValues = valori
 
         secPicker.minValue = 0
-        secPicker.maxValue = 60
+        secPicker.maxValue = 59
         secPicker.displayedValues = valori
 
         minPicker.setOnValueChangedListener { picker, oldVal, newVal ->

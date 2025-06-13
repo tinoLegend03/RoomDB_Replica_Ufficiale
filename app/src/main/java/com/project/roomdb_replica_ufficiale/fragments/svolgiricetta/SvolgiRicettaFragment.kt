@@ -17,7 +17,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
@@ -37,9 +36,11 @@ class SvolgiRicettaFragment: Fragment() {
         //Add key Strings for use with the Bundle
         const val MBOUND_KEY = "mbound"
 
-        const val NAME_RICETTA = "name_ricetta"
+        const val KEY_NOME_RICETTA = "name_ricetta"
 
         const val EXTRA_START_TIMER = "extra_start_timer"
+
+        const val KEY_CURRENT_STEP = "current_step"
 
     }
 
@@ -52,7 +53,7 @@ class SvolgiRicettaFragment: Fragment() {
     private var currentStep: Int = 0
     private var valueBar: Int = 0
     var steps = mutableListOf<Istruzione>()
-    lateinit private var nameRecipe: String
+    private lateinit var nameRecipe: String
 
     // Attributi per stato e gestione del timer
     var mService : TimerService? = null
@@ -160,12 +161,15 @@ class SvolgiRicettaFragment: Fragment() {
 
         mRicettaViewModel = ViewModelProvider(this)[RicettaViewModel::class.java]
 
+        if(savedInstanceState != null){
+            nameRecipe = savedInstanceState.getString(KEY_NOME_RICETTA, "")
+        }
+
         val args = SvolgiRicettaFragmentArgs.fromBundle(requireArguments())
         if (args.currentRecipe == null) { //accedo dalla notifica, non ho NavArgs
             val preferences = requireActivity().getPreferences(MODE_PRIVATE)
 
-            nameRecipe = preferences.getString(NAME_RICETTA, "value").toString() //prendo valore salvato
-
+            nameRecipe = preferences.getString(KEY_NOME_RICETTA, "value").toString() //prendo valore salvato
 
             pendingTimeLeft = mService?.timeLeft ?: 0
             pendingState = mService?.currentState ?: TimerState.IDLE
@@ -182,8 +186,14 @@ class SvolgiRicettaFragment: Fragment() {
             steps.forEach {
                 binding.stepText.text = getString(R.string.step_message, binding.stepText.text, it.descrizione)
             }
+
             totalStep = steps.size
-            currentStep = 0
+
+            if(savedInstanceState != null){
+                currentStep = savedInstanceState.getInt(KEY_CURRENT_STEP)
+            } else {
+                currentStep = 0
+            }
 
             updateButtons()
             if (totalStep > 1){
@@ -243,22 +253,22 @@ class SvolgiRicettaFragment: Fragment() {
             updateButtons()
         }
 
-        //GESTIONE TIMER
-        if(savedInstanceState != null){
-            mBound = savedInstanceState.getBoolean(MBOUND_KEY)
-
-            if(mBound) {
-                val action = TimerService.ACTION_RESUME
-
-                val intent = Intent(ctx, TimerService::class.java).apply {
-                    this.action = action
-                    putExtra(EXTRA_START_TIMER, pendingTimeLeft)
-                }
-
-                ctx.startForegroundService(intent)
-                ctx.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-            }
-        }
+//        //GESTIONE TIMER
+//        if(savedInstanceState != null){
+//            mBound = savedInstanceState.getBoolean(MBOUND_KEY)
+//
+//            if(mBound) {
+//                val action = TimerService.ACTION_RESUME
+//
+//                val intent = Intent(ctx, TimerService::class.java).apply {
+//                    this.action = action
+//                    putExtra(EXTRA_START_TIMER, pendingTimeLeft)
+//                }
+//
+//                ctx.startForegroundService(intent)
+//                ctx.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+//            }
+//        }
 
         //listener per risultato TIMEPICKER
         setFragmentResultListener(TimePickerFragment.REQUEST_KEY) { requestKey, bundle -> //se arriva la richiesta da TIMEPICKER
@@ -440,9 +450,16 @@ class SvolgiRicettaFragment: Fragment() {
         val preferences = requireActivity().getPreferences(MODE_PRIVATE)
         val editor = preferences.edit()
 
-        editor.putString(NAME_RICETTA, nameRecipe)
+        editor.putString(KEY_NOME_RICETTA, nameRecipe)
         editor.apply()
     }
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        savedInstanceState.putInt(KEY_CURRENT_STEP, currentStep)
+        savedInstanceState.putString(KEY_NOME_RICETTA, nameRecipe)
+        super.onSaveInstanceState(savedInstanceState)
+    }
+
     override fun onStop() {
         super.onStop()
         if (mBound) {

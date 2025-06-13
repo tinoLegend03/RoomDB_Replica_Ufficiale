@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.update.UpdateFragment"
-    android:padding="24dp">
+    android:padding="24dp"
+    tools:context=".fragments.update.UpdateFragment">
 
     <EditText
         android:id="@+id/updateRecipeName_et"
@@ -33,33 +33,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateRecipeName_et" />
 
-    <EditText
+    <Spinner
         android:id="@+id/updateRecipeLevel_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Livello"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="171dp"
+        android:layout_height="48dp"
+        android:text="@string/difficolta"
+        app:layout_constraintBottom_toTopOf="@+id/updateDuration_et"
+        app:layout_constraintEnd_toStartOf="@+id/updateRecipeCategory_et"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateRecipeDescription_et" />
 
-    <EditText
+    <Spinner
         android:id="@+id/updateRecipeCategory_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Categoria"
-        android:inputType="text"
+        android:layout_width="171dp"
+        android:layout_height="48dp"
+        android:text="@string/categoria"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/updateRecipeLevel_et" />
-
-
+        app:layout_constraintStart_toEndOf="@+id/updateRecipeLevel_et"
+        tools:layout_editor_absoluteY="313dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/updateRecipeLevel_et"/>
 
     <EditText
         android:id="@+id/updateDuration_et"
@@ -91,10 +85,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Elimina"
-        app:layout_constraintTop_toBottomOf="@+id/update_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/update_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

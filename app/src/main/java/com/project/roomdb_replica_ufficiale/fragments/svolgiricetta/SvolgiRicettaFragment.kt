@@ -7,6 +7,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -16,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
@@ -171,9 +173,7 @@ class SvolgiRicettaFragment: Fragment() {
             nameRecipe = args.currentRecipe.nomeRicetta
         }
 
-
-
-        binding.seekBar.isEnabled = false
+        binding.seekBar.isEnabled = true
         binding.nameRecipe.text = nameRecipe
 
         mRicettaViewModel.getRicettaConIstruzioni(nameRecipe).observe(viewLifecycleOwner) { dati ->
@@ -188,8 +188,14 @@ class SvolgiRicettaFragment: Fragment() {
             updateButtons()
             if (totalStep > 1){
                 valueBar = binding.seekBar.max / (totalStep-1)
+                if(binding.seekBar.progress == binding.seekBar.max){
+                    seekBarFinished(ctx)
+                    finishButton(ctx)
+                }
             } else {
                 binding.seekBar.progress = binding.seekBar.max
+                seekBarFinished(ctx)
+
             }
             if(totalStep == 0){
                 Toast.makeText(ctx, "Non presenta step", Toast.LENGTH_SHORT).show()
@@ -204,6 +210,10 @@ class SvolgiRicettaFragment: Fragment() {
                 currentStep++
                 updateText()
                 binding.seekBar.progress += valueBar
+
+                if(binding.seekBar.progress == binding.seekBar.max){
+                    seekBarFinished(ctx)
+                }
             } else if (currentStep == totalStep - 1) {
                 //aggiungi 1 al completamento ricetta
 
@@ -349,7 +359,15 @@ class SvolgiRicettaFragment: Fragment() {
         return view
     }
 
-    private fun updateButtons() {
+    private fun seekBarFinished(ctx: Context) {
+        val tint = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.green))
+        binding.seekBar.progressTintList = tint
+    }
+    private fun finishButton(ctx: Context) {
+        val tint = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.green))
+    }
+
+        private fun updateButtons() {
         if(currentStep == totalStep-1){
             binding.stepForward.text = "Done"
         } else {
@@ -433,4 +451,6 @@ class SvolgiRicettaFragment: Fragment() {
         }
 
     }
+
 }
+
